@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User } from '../types';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { User } from "../types";
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -23,33 +24,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Autenticação temporária para demonstração
-      if (email === 'admin@gasgestao.com' && password === 'admin123') {
-        const userData: User = {
-          id: '1',
-          name: 'Administrador',
-          email: 'admin@gasgestao.com',
-          role: 'admin',
-          isActive: true,
-          permissions: ['all'],
-          lastLogin: new Date()
-        };
-        
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        return true;
-      } else {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error("Erro no login:", error.message);
         return false;
       }
+
+      setUser(data.user as User);
+      return true;
     } catch (err) {
-      console.error("Erro no login:", err);
+      console.error("Erro inesperado:", err);
       return false;
     }
   };
 
-  const logout = () => {
+  const logout = async (): Promise<void> => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem("user");
   };
 
   return (
