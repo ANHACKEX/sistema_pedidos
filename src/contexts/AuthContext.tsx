@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import bcrypt from 'bcryptjs';
 import { User } from '../types';
 
 interface AuthContextType {
@@ -25,31 +23,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Busca o usuário pelo email
-      const { data, error } = await supabase
-        .from('usuarios')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (error || !data) {
-        console.error("Usuário não encontrado:", error);
+      // Autenticação temporária para demonstração
+      if (email === 'admin@gasgestao.com' && password === 'admin123') {
+        const userData: User = {
+          id: '1',
+          name: 'Administrador',
+          email: 'admin@gasgestao.com',
+          role: 'admin',
+          isActive: true,
+          permissions: ['all'],
+          lastLogin: new Date()
+        };
+        
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        return true;
+      } else {
         return false;
       }
-
-      // Compara senha digitada com a hash salva no banco
-      const senhaCorreta = await bcrypt.compare(password, data.senha);
-
-      if (!senhaCorreta) {
-        console.warn("Senha incorreta para:", email);
-        return false;
-      }
-
-      // Autentica o usuário
-      setUser(data);
-      localStorage.setItem("user", JSON.stringify(data));
-      return true;
-
     } catch (err) {
       console.error("Erro no login:", err);
       return false;
