@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { DataProvider } from './contexts/DataContext';
 import { ToastManager } from './components/ui/Toast';
+import SystemStatus from './components/ui/SystemStatus';
 import Layout from './components/layout/Layout';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -106,6 +107,7 @@ function App() {
           <DataProvider>
             <AppRoutes />
             <ToastManager />
+            <SystemStatus />
           </DataProvider>
         </AuthProvider>
       </Router>

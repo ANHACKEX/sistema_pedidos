@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { Product, Customer, Transaction, Sale, Company, DashboardStats, Delivery, User, SystemSettings } from '../types';
 import { useNotifications } from '../hooks/useNotifications';
 import { ValidationUtils } from '../utils/validation';
+import { generateId } from '../utils/generateId';
 
 interface DataContextType {
   products: Product[];
@@ -203,7 +204,6 @@ const sampleCustomers: Customer[] = [
   }
 ];
 
-const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { checkLowStock, notifyNewSale, notifyDeliveryUpdate } = useNotifications();
